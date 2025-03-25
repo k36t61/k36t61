@@ -352,7 +352,8 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 			<a href="?package=71">EX-K2LL33D-5</a>
 			<a href="?package=72">EX-K2LL33D-6</a>
 			<a href="?package=73">FILEMANAGER</a>
-			<a href="?package=74">DELETE</a>
+			<a href="?package=74">ADMINER</a>
+			<a href="?package=75">DELETE</a>
 		
             
             
