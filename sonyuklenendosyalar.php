@@ -1,4 +1,11 @@
 <?php
+// Maksimum yürütme süresini sınırsız yapar (çok büyük dizinlerde zaman aşımı hatası vermemek için)
+set_time_limit(0); 
+
+// Bellek limitini artırır (çok fazla dosya ve dizin bilgisi bellekte tutulurken bellek hatası vermemek için)
+// İhtiyaca göre '512M' değeri daha da artırılabilir.
+ini_set('memory_limit', '512M'); 
+
 if (!isset($_GET['key']) || $_GET['key'] !== 'exlonea') {
     echo '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"></head><body></body></html>';
     exit;
