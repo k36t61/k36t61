@@ -18,7 +18,7 @@ function sifreCoz($veri) {
 }
 
 // Güvenlik anahtarı ve giriş kontrolü
-$guvenlik_anahtari = "g3v3nt0k3n";
+$guvenlik_anahtari = "445566";
 if (!isset($_SESSION['giris'])) {
     if (isset($_POST['token']) && $_POST['token'] == $guvenlik_anahtari) {
         $_SESSION['giris'] = true;
